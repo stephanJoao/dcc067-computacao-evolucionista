@@ -24,14 +24,12 @@ def plot_functions_2d(function):
         cmap="viridis",
         levels=np.linspace(np.min(Z), np.max(Z), 100),
     )
-    plt.title(
-        f"Contour plot of {format(function.__self__.__class__.__name__)}"
-    )
+    plt.title(f"Contour plot of {function.__self__.__class__.__name__}")
 
     plt.colorbar()
     plt.tight_layout()
     plt.savefig(
-        f"contour_plot_{format(function.__self__.__class__.__name__)}.png",
+        f"plots/contour_plot_{function.__self__.__class__.__name__}.png",
         dpi=300,
     )
 
@@ -51,16 +49,14 @@ def plot_functions_3d(function):
     plt.figure()
     ax = plt.axes(projection="3d")
     ax.plot_surface(X, Y, Z, cmap="viridis")
-    plt.title(
-        f"Surface plot of {format(function.__self__.__class__.__name__)}"
-    )
+    plt.title(f"Surface plot of {function.__self__.__class__.__name__}")
 
     plt.xlim(-100, 100)
     plt.ylim(-100, 100)
     ax.set_zlim(np.min(Z), np.max(Z))
     plt.tight_layout()
     plt.savefig(
-        f"surface_plot_{format(function.__self__.__class__.__name__)}.png",
+        f"plots/surface_plot_{function.__self__.__class__.__name__}.png",
         dpi=300,
     )
 
@@ -73,7 +69,6 @@ if __name__ == "__main__":
     # if plots dir does not exist, create it
     if not os.path.exists("plots"):
         os.makedirs("plots")
-    os.chdir("plots")
 
     print("Plotting 2D")
     plot_functions_2d(f1)
