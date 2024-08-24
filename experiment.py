@@ -120,7 +120,7 @@ if __name__ == "__main__":
     os.chdir(f"results_{ndim}D")
 
     # Experiment setting
-    iterations = 10
+    iterations = 30
     functions = [f1, f11]
     pop_sizes = [50, 100, 150]
     elite_best_values = [0.1, 0.2, 0.3]
