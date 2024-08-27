@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 
 def plot_best(function, pop_size):
-    os.chdir(f"results_{ndim}D")
     X = np.array(elite_best_values)
     Y = np.array(elite_worst_values)
     Z = np.zeros((len(X), len(Y)))
@@ -17,7 +16,7 @@ def plot_best(function, pop_size):
             Z[
                 elite_best_values.index(elite_best),
                 elite_worst_values.index(elite_worst),
-            ] = df["best_fit"].mean()
+            ] = df["best_fitness"].mean()
     X, Y = np.meshgrid(X, Y)
 
     plt.figure()
@@ -44,7 +43,7 @@ def plot_line(function, value="list_fitness"):
                 Z[
                     elite_best_values.index(elite_best),
                     elite_worst_values.index(elite_worst),
-                ] = df["best_fit"].mean()
+                ] = df["best_fitness"].mean()
         best_elite_best, best_elite_worst = np.unravel_index(
             Z.argmin(), Z.shape
         )
@@ -95,11 +94,11 @@ def plot_line(function, value="list_fitness"):
 
 
 if __name__ == "__main__":
-    ndim = 2
+    ndim = 10
     os.chdir(f"results_{ndim}D")
 
-    functions = ["F12014"]  # , "F112014"]
-    pop_sizes = [50, 100]
+    functions = ["F12014", "F112014"]
+    pop_sizes = [50, 100, 150, 200]
     elite_best_values = [0.10, 0.15, 0.20, 0.25, 0.30]
     elite_worst_values = [0.10, 0.15, 0.20, 0.25, 0.30]
 

@@ -6,9 +6,9 @@ from opfunu.cec_based.cec2014 import F12014, F112014
 
 
 def read_solutions(function):
-    os.chdir("/results_2D")
+    os.chdir("results_2D")
     f_name = function.__self__.__class__.__name__
-    pop_sizes = [50, 100]
+    pop_sizes = [50, 100, 150, 200]
     elite_best_values = [0.10, 0.15, 0.20, 0.25, 0.30]
     elite_worst_values = [0.10, 0.15, 0.20, 0.25, 0.30]
 
