@@ -5,7 +5,9 @@ from opfunu.cec_based.cec2014 import F12014, F112014
 from mealpy import FloatVar, GA
 
 
-def experiment(function, pop=50, elite_best=0.1, elite_worst=0.3):
+def experiment(
+    function, epoch=1000, pop_size=50, elite_best=0.1, elite_worst=0.3
+):
     problem_dict = {
         "obj_func": function,
         "bounds": FloatVar(lb=(-100.0,) * ndim, ub=(100.0,) * ndim),
@@ -15,8 +17,8 @@ def experiment(function, pop=50, elite_best=0.1, elite_worst=0.3):
     }
 
     model = GA.EliteSingleGA(
-        epoch=100,
-        pop_size=pop,
+        epoch=epoch,
+        pop_size=pop_size,
         selection="tournament",
         crossover="uniform",
         elite_best=elite_best,
@@ -27,10 +29,11 @@ def experiment(function, pop=50, elite_best=0.1, elite_worst=0.3):
 
     return (
         best.target.fitness,
+        best.solution,
         np.array(model.history.list_global_best_fit),
-        np.array(model.history.list_diversity),
         np.array(model.history.list_exploration),
         np.array(model.history.list_exploitation),
+        np.array(model.history.list_diversity),
     )
 
 
@@ -38,47 +41,40 @@ def run_experiments(
     functions, iterations, pop_sizes, elite_best_values, elite_worst_values
 ):
     columns = [
-        "iteration",
-        "function",
-        "pop_size",
-        "elite_best",
-        "elite_worst",
-        "best_fit",
+        "best_fitness",
+        "best_solution",
         "list_fitness",
-        "list_diversity",
-        "list_exploitation",
         "list_exploration",
+        "list_exploitation",
+        "list_diversity",
     ]
 
     for function in functions:
         f = function.__self__.__class__.__name__
-        for pop in pop_sizes:
+        for pop_size in pop_sizes:
             for elite_best in elite_best_values:
                 for elite_worst in elite_worst_values:
                     df = pd.DataFrame(columns=columns).astype(
                         {
-                            "iteration": int,
-                            "function": str,
-                            "pop_size": int,
-                            "elite_best": float,
-                            "elite_worst": float,
-                            "best_fit": float,
+                            "best_fitness": float,
+                            "best_solution": object,
                             "list_fitness": object,
-                            "list_diversity": object,
-                            "list_exploitation": object,
                             "list_exploration": object,
+                            "list_exploitation": object,
+                            "list_diversity": object,
                         }
                     )
                     for iteration in range(iterations):
                         (
-                            best,
-                            global_best_fit,
-                            diversity,
-                            exploration,
-                            exploitation,
+                            best_fitness,
+                            best_solution,
+                            list_fitness,
+                            list_exploitation,
+                            list_exploration,
+                            list_diversity,
                         ) = experiment(
                             function,
-                            pop=pop,
+                            pop_size=pop_size,
                             elite_best=elite_best,
                             elite_worst=elite_worst,
                         )
@@ -88,23 +84,21 @@ def run_experiments(
                                 df,
                                 pd.DataFrame(
                                     {
-                                        "iteration": iteration,
-                                        "function": f,
-                                        "pop_size": pop,
-                                        "elite_best": elite_best,
-                                        "elite_worst": elite_worst,
-                                        "best_fit": best,
-                                        "list_fitness": [global_best_fit],
-                                        "list_diversity": [diversity],
-                                        "list_exploitation": [exploitation],
-                                        "list_exploration": [exploration],
+                                        "best_fitness": best_fitness,
+                                        "best_solution": [best_solution],
+                                        "list_fitness": [list_fitness],
+                                        "list_exploration": [list_exploration],
+                                        "list_exploitation": [
+                                            list_exploitation
+                                        ],
+                                        "list_diversity": [list_diversity],
                                     },
                                     index=[0],
                                 ),
                             ]
                         )
                     df.to_csv(
-                        f"{f}_{pop}_{elite_best}_{elite_worst}.csv",
+                        f"{f}_{pop_size}_{elite_best}_{elite_worst}.csv",
                         index=False,
                     )
 

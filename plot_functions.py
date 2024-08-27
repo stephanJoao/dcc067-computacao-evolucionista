@@ -1,10 +1,38 @@
 import os
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from opfunu.cec_based.cec2014 import F12014, F112014
 
 
-def plot_functions_2d(function):
+def read_solutions(function):
+    os.chdir("/results_2D")
+    f_name = function.__self__.__class__.__name__
+    pop_sizes = [50, 100]
+    elite_best_values = [0.10, 0.15, 0.20, 0.25, 0.30]
+    elite_worst_values = [0.10, 0.15, 0.20, 0.25, 0.30]
+
+    solutions = []
+    for pop_size in pop_sizes:
+        for elite_best in elite_best_values:
+            for elite_worst in elite_worst_values:
+                df = pd.read_csv(
+                    f"{f_name}_{pop_size}_{elite_best}_{elite_worst}.csv"
+                )
+                s = np.array(
+                    [
+                        np.fromstring(i[1:-1], sep=" ")
+                        for i in df["best_solution"].values
+                    ]
+                ).mean(axis=0)
+                solutions.append(s)
+    solutions = np.array(solutions)
+    os.chdir("..")
+
+    return solutions
+
+
+def plot_functions_2d(function, plot_solutions=True):
     x = np.linspace(-100, 100, 500)
     y = np.linspace(-100, 100, 500)
 
@@ -24,6 +52,10 @@ def plot_functions_2d(function):
         cmap="viridis",
         levels=np.linspace(np.min(Z), np.max(Z), 100),
     )
+    if plot_solutions:
+        solutions = read_solutions(function)
+        for solution in solutions:
+            plt.plot(solution[0], solution[1], "ro")
     plt.title(f"Contour plot of {function.__self__.__class__.__name__}")
 
     plt.colorbar()

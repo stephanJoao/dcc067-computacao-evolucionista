@@ -58,7 +58,6 @@ def plot_line(function, value="list_fitness"):
                 df = pd.read_csv(
                     f"{function}_{pop_size}_{elite_best}_{elite_worst}.csv"
                 )
-                # each line to np array
                 values = np.array(
                     [np.fromstring(i[1:-1], sep=" ") for i in df[value].values]
                 ).mean(axis=0)
@@ -96,11 +95,11 @@ def plot_line(function, value="list_fitness"):
 
 
 if __name__ == "__main__":
-    ndim = 10
+    ndim = 2
     os.chdir(f"results_{ndim}D")
 
-    functions = ["F112014"]  # , "F112014"]
-    pop_sizes = [50, 100, 150, 200]
+    functions = ["F12014"]  # , "F112014"]
+    pop_sizes = [50, 100]
     elite_best_values = [0.10, 0.15, 0.20, 0.25, 0.30]
     elite_worst_values = [0.10, 0.15, 0.20, 0.25, 0.30]
 
