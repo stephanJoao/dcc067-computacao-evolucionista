@@ -2,30 +2,26 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from opfunu.cec_based.cec2014 import F12014, F112014
+from opfunu.cec_based.cec2014 import F12014, F52014, F92014, F112014
 
 
 def read_solutions(function):
     os.chdir("results_2D")
     f_name = function.__self__.__class__.__name__
-    pop_sizes = [50, 100, 150, 200]
-    elite_best_values = [0.10, 0.15, 0.20, 0.25, 0.30]
-    elite_worst_values = [0.10, 0.15, 0.20, 0.25, 0.30]
+    pop_size = 50
+    elite_best = 0.2
+    elite_worst = 0.2
 
+    # não funciona depois do trabalho 2
     solutions = []
-    for pop_size in pop_sizes:
-        for elite_best in elite_best_values:
-            for elite_worst in elite_worst_values:
-                df = pd.read_csv(
-                    f"{f_name}_{pop_size}_{elite_best}_{elite_worst}.csv"
-                )
-                s = np.array(
-                    [
-                        np.fromstring(i[1:-1], sep=" ")
-                        for i in df["best_solution"].values
-                    ]
-                ).mean(axis=0)
-                solutions.append(s)
+    df = pd.read_csv(
+        # f"{f_name}_{pop_size}_{elite_best}_{elite_worst}_GA.csv"
+        f"{f_name}_{pop_size}_{elite_best}_{elite_worst}_ABC.csv"
+    )
+    s = np.array(
+        [np.fromstring(i[1:-1], sep=" ") for i in df["best_solution"].values]
+    ).mean(axis=0)
+    solutions.append(s)
     solutions = np.array(solutions)
     os.chdir("..")
 
@@ -96,6 +92,8 @@ def plot_functions_3d(function):
 if __name__ == "__main__":
     ndim = 2
     f1 = F12014(ndim=ndim).evaluate
+    f5 = F52014(ndim=ndim).evaluate
+    f9 = F92014(ndim=ndim).evaluate
     f11 = F112014(ndim=ndim).evaluate
 
     # if plots dir does not exist, create it
@@ -103,8 +101,13 @@ if __name__ == "__main__":
         os.makedirs("plots")
 
     print("Plotting 2D")
-    plot_functions_2d(f1)
-    plot_functions_2d(f11)
+    plot_functions_2d(f1, False)
+    plot_functions_2d(f5, False)
+    plot_functions_2d(f9, False)
+    plot_functions_2d(f11, False)
+
     print("Plotting 3D")
     plot_functions_3d(f1)
+    plot_functions_3d(f5)
+    plot_functions_3d(f9)
     plot_functions_3d(f11)
