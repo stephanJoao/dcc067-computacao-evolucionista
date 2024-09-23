@@ -193,9 +193,12 @@ def run_experiments_ABC(
 
 
 if __name__ == "__main__":
-    ndim = 2
+    ndim = 30
     f5 = F52014(ndim=ndim).evaluate
     f9 = F92014(ndim=ndim).evaluate
+
+    print(f9(np.ones(ndim)))
+    exit()
 
     # if plots results does not exist, create it
     if not os.path.exists(f"results_{ndim}D"):
