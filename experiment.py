@@ -1,16 +1,16 @@
 import os
 import numpy as np
 import pandas as pd
-from opfunu.cec_based.cec2014 import F12014, F52014, F92014, F112014
 from mealpy import FloatVar, GA, ABC
+from problem import evaluate, bounds
 
 
 def experiment_GA(
-    function, epoch=1000, pop_size=50, elite_best=0.2, elite_worst=0.2
+    function, bounds, epoch=1000, pop_size=50, elite_best=0.2, elite_worst=0.2
 ):
     problem_dict = {
         "obj_func": function,
-        "bounds": FloatVar(lb=(-100.0,) * ndim, ub=(100.0,) * ndim),
+        "bounds": bounds,
         "minmax": "min",
         "log_to": "None",
         "save_population": True,
@@ -38,11 +38,11 @@ def experiment_GA(
 
 
 def experiment_ABC(
-    function, epoch=1000, pop_size=50, elite_best=0.2, elite_worst=0.2
+    function, bounds, epoch=1000, pop_size=50, elite_best=0.2, elite_worst=0.2
 ):
     problem_dict = {
         "obj_func": function,
-        "bounds": FloatVar(lb=(-100.0,) * ndim, ub=(100.0,) * ndim),
+        "bounds": bounds,
         "minmax": "min",
         "log_to": "None",
         "save_population": True,
@@ -70,7 +70,7 @@ def experiment_ABC(
 
 
 def run_experiments_GA(
-    functions, iterations, pop_size, elite_best, elite_worst
+    functions, bounds, iterations, pop_size, elite_best, elite_worst
 ):
     columns = [
         "best_fitness",
@@ -82,7 +82,7 @@ def run_experiments_GA(
     ]
 
     for function in functions:
-        f = function.__self__.__class__.__name__
+        f = "ballbearingshit"
         df = pd.DataFrame(columns=columns).astype(
             {
                 "best_fitness": float,
@@ -103,6 +103,7 @@ def run_experiments_GA(
                 list_diversity,
             ) = experiment_GA(
                 function,
+                bounds,
                 pop_size=pop_size,
                 elite_best=elite_best,
                 elite_worst=elite_worst,
@@ -131,7 +132,7 @@ def run_experiments_GA(
 
 
 def run_experiments_ABC(
-    functions, iterations, pop_size, elite_best, elite_worst
+    functions, bounds, iterations, pop_size, elite_best, elite_worst
 ):
     columns = [
         "best_fitness",
@@ -143,7 +144,7 @@ def run_experiments_ABC(
     ]
 
     for function in functions:
-        f = function.__self__.__class__.__name__
+        f = "ballbearingshit"
         df = pd.DataFrame(columns=columns).astype(
             {
                 "best_fitness": float,
@@ -164,6 +165,7 @@ def run_experiments_ABC(
                 list_diversity,
             ) = experiment_ABC(
                 function,
+                bounds,
                 pop_size=pop_size,
                 elite_best=elite_best,
                 elite_worst=elite_worst,
@@ -192,27 +194,23 @@ def run_experiments_ABC(
 
 
 if __name__ == "__main__":
-    ndim = 30
-    f1 = F12014(ndim=ndim).evaluate
-    f5 = F52014(ndim=ndim).evaluate
-    f9 = F92014(ndim=ndim).evaluate
-    f11 = F112014(ndim=ndim).evaluate
+    f = evaluate
 
     # if plots results does not exist, create it
-    if not os.path.exists(f"results_{ndim}D"):
-        os.makedirs(f"results_{ndim}D")
-    os.chdir(f"results_{ndim}D")
+    if not os.path.exists("results"):
+        os.makedirs("results")
+    os.chdir("results")
 
     # Experiment setting (para outras configs checar tag trab2)
+    functions = [f]
     iterations = 10
-    functions = [f1, f5, f9, f11]
-    pop_size = 50
+    pop_size = 200
     elite_best = 0.2
     elite_worst = 0.2
 
     run_experiments_GA(
-        functions, iterations, pop_size, elite_best, elite_worst
+        functions, bounds, iterations, pop_size, elite_best, elite_worst
     )
     run_experiments_ABC(
-        functions, iterations, pop_size, elite_best, elite_worst
+        functions, bounds, iterations, pop_size, elite_best, elite_worst
     )
