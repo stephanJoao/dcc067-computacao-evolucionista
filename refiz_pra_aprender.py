@@ -1,5 +1,5 @@
 import numpy as np
-from mealpy import FloatVar, GA, CEM
+from mealpy import FloatVar, GA, ABC
 
 D = 160
 d = 90
@@ -101,11 +101,12 @@ def g9(solution):
     return abs(result) if result < 0 else 0
 
 
+
 def evaluate_with_penalty(solution):
     _, D_b, Z, _, _, _, _, _, _, _ = solution
 
-    coef = 1 if D <= 254 else 3.647
-    exp = 1.8 if D_b <= 254 else 1.4
+    coef = 1 if D <= 25.4 else 3.647
+    exp = 1.8 if D_b <= 25.4 else 1.4
 
     val = coef * f_c(solution) * Z ** (2 / 3) * D_b**exp
 
@@ -128,8 +129,8 @@ def evaluate_with_penalty(solution):
 def evaluate(solution):
     _, D_b, Z, _, _, _, _, _, _, _ = solution
 
-    coef = 1 if D <= 254 else 3.647
-    exp = 1.8 if D_b <= 254 else 1.4
+    coef = 1 if D <= 25.4 else 3.647
+    exp = 1.8 if D_b <= 25.4 else 1.4
 
     val = coef * f_c(solution) * Z ** (2 / 3) * D_b**exp
 
@@ -137,18 +138,6 @@ def evaluate(solution):
 
 
 if __name__ == "__main__":
-    solution = [
-        125.7171,
-        21.423,
-        11,
-        0.515,
-        0.515,
-        0.4159,
-        0.651,
-        0.300043,
-        0.0223,
-        0.751,
-    ]
 
     bounds = [
         FloatVar(0.5 * (D + d), 0.6 * (D + d)),  # D_m
@@ -169,13 +158,13 @@ if __name__ == "__main__":
         "minmax": "max",
     }
 
-    # model = GA.EliteMultiGA(
-    #     epoch=1000,
-    #     selection="roulette",
-    #     crossover="uniform",
-    # )
-
-    model = CEM.OriginalCEM(epoch=1000, pop_size=50, n_best=20, alpha=0.7)
+    model = GA.EliteSingleGA(
+        epoch=1000,
+        n_pop=200,
+        selection="tournament",
+        crossover="uniform"
+    )
+    # model = ABC.OriginalABC(epoch=1000)
 
     best = model.solve(problem_dict)
 
